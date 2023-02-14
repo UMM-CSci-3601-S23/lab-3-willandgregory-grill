@@ -99,12 +99,12 @@ export class TodoService {
    * @param filters the map of key-value pairs used for the filtering
    * @returns an array of `Todos` matching the given filters
    */
-  filterTodos(todos: Todo[], filters: { name?: string; body?: string }): Todo[] {
+  filterTodos(todos: Todo[], filters: { category?: string; body?: string }): Todo[] {
     let filteredTodos = todos;
 
-    if (filters.name) {
-      filters.name = filters.name.toLowerCase();
-      filteredTodos = filteredTodos.filter(todo => todo.name.toLowerCase().indexOf(filters.name) !== -1);
+    if (filters.category) {
+      filters.category = filters.category.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
     }
 
     if (filters.body) {
