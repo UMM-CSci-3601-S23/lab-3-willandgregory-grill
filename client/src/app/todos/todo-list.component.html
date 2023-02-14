@@ -10,17 +10,32 @@
 
           <mat-form-field class="input-field">
             <mat-label>Name</mat-label>
-            <input matInput data-test="todoNameInput" placeholder="Filter by name"
-            [(ngModel)]="todoName" (input)="updateFilter()">
+            <input matInput data-test="todoCategoryInput" placeholder="Filter by category"
+            [(ngModel)]="todoCategory" (input)="updateFilter()">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
 
           <mat-form-field class="input-field">
             <mat-label>Company</mat-label>
-            <input matInput data-test="todoCompanyInput" placeholder="Filter by company"
-            [(ngModel)]="todoCompany" (input)="updateFilter()">
+            <input matInput data-test="todoOwnerInput" placeholder="Filter by owner"
+            [(ngModel)]="todoOwner" (input)="updateFilter()">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
+
+          <!-- <mat-form-field class="input-field">
+            <mat-label>Company</mat-label>
+            <input matInput data-test="todoBodyInput" placeholder="Filter by body"
+            [(ngModel)]="todoBody" (input)="updateFilter()">
+            <mat-hint>Filtered on client</mat-hint>
+          </mat-form-field> -->
+
+          <!-- <mat-form-field class="input-field">
+            <mat-label>Company</mat-label>
+            <input matInput data-test="todoCategoryInput" placeholder="Filter by category"
+            [(ngModel)]="todoCategory" (input)="updateFilter()">
+            <mat-hint>Filtered on client</mat-hint>
+          </mat-form-field> -->
+
         </div>
 
         <div class="flex-row gap-10 flex-wrap">
@@ -28,18 +43,17 @@
 
           <mat-form-field class="input-field">
             <mat-label>Age</mat-label>
-            <input matInput data-test="todoAgeInput" type="number" placeholder="Filter by age"
-            min="0" max="200" [(ngModel)]="todoAge" (input)="gettodosFromServer()">
+            <input matInput data-test="todoBodyInput" type="number" placeholder="Filter by body"
+            min="0" max="200" [(ngModel)]="todoBody" (input)="gettodosFromServer()">
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
 
           <mat-form-field class="input-field">
-            <mat-label>Role</mat-label>
-            <mat-select (selectionChange)="gettodosFromServer()" [(ngModel)]="todoRole" data-test="todoRoleSelect">
+            <mat-label>Status</mat-label>
+            <mat-select (selectionChange)="gettodosFromServer()" [(ngModel)]="todoStatus" data-test="todoStatusSelect">
               <mat-option>--</mat-option>
-              <mat-option value="admin">Admin</mat-option>
-              <mat-option value="editor">Editor</mat-option>
-              <mat-option value="viewer">Viewer</mat-option>
+              <mat-option value="incomplete">Incomplete</mat-option>
+              <mat-option value="complete">Complete</mat-option>
             </mat-select>
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
@@ -76,8 +90,8 @@
             <h3 mat-subheader>todos</h3>
             <a mat-list-item *ngFor="let todo of this.filteredtodos" [routerLink]="['/todos', todo._id]" class="todo-list-item">
               <img matListItemAvatar [src]="todo.avatar" *ngIf="this.todo.avatar">
-              <span matListItemTitle mat-line class="todo-list-name"> {{todo.name}} </span>
-              <span matListItemLine class="todo-list-role"> {{todo.role}} </span>
+              <span matListItemTitle mat-line class="todo-list-owner"> {{todo.owner}} </span>
+              <span matListItemLine class="todo-list-category"> {{todo.category}} </span>
             </a>
           </mat-nav-list>
         </mat-card-content>
