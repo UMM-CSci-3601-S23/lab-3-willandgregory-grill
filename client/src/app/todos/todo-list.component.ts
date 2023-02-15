@@ -3,17 +3,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Todo, TodoStatus } from './todo';
 import { TodoService } from './todo.service';
 
-// @Component({
-//   selector: 'app-todo-list',
-//   templateUrl: './todo-list.component.html',
-//   styleUrls: ['./todo-list.component.scss']
-// })
-// export class TodoListComponent {
-
-// }
-
-
-
 /**
  * A component that displays a list of todos, either as a grid
  * of cards or as a vertical list.
@@ -58,8 +47,8 @@ export class TodoListComponent implements OnInit {
    */
   getTodosFromServer() {
     this.todoService.getTodos({
-      role: this.todoRole,
-      age: this.todoAge
+      body: this.todoBody,
+      status: this.todoStatus
     }).subscribe(returnedTodos => {
       // This inner function passed to `subscribe` will be called
       // when the `Observable` returned by `getTodos()` has one
@@ -86,7 +75,7 @@ export class TodoListComponent implements OnInit {
    */
   public updateFilter() {
     this.filteredTodos = this.todoService.filterTodos(
-      this.serverFilteredTodos, { name: this.todoName, company: this.todoCompany }
+      this.serverFilteredTodos, { category: this.todoCategory }
     );
   }
 
