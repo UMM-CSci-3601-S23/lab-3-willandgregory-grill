@@ -1,21 +1,10 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-todo-list',
-//   templateUrl: './todo-list.component.html',
-//   styleUrls: ['./todo-list.component.scss']
-// })
-// export class TodoListComponent {
-
-// }
-
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { User, UserRole } from './user';
-import { UserService } from './user.service';
+import { Todo, TodoStatus } from './todo';
+import { TodoService } from './todo.service';
 
 /**
- * A component that displays a list of users, either as a grid
+ * A component that displays a list of todos, either as a grid
  * of cards or as a vertical list.
  *
  * The component supports local filtering by name and/or company,
@@ -25,53 +14,52 @@ import { UserService } from './user.service';
  * makes the most sense to do the filtering.
  */
 @Component({
-  selector: 'app-user-list-component',
-  templateUrl: 'user-list.component.html',
-  styleUrls: ['./user-list.component.scss'],
+  selector: 'app-todo-list-component',
+  templateUrl: 'todo-list.component.html',
+  styleUrls: ['./todo-list.component.scss'],
   providers: []
 })
-export class UserListComponent implements OnInit {
+export class TodoListComponent implements OnInit {
   // These are public so that tests can reference them (.spec.ts)
-  public serverFilteredUsers: User[];
-  public filteredUsers: User[];
-
-  public userName: string;
-  public userAge: number;
-  public userRole: UserRole;
-  public userCompany: string;
+  public serverFilteredTodos: Todo[];
+  public filteredTodos: Todo[];
+  public limit: number;
+  public todoOwner: string;
+  public todoStatus: TodoStatus;
+  public todoBody: string;
+  public todoCategory: string;
   public viewType: 'card' | 'list' = 'card';
 
   /**
-   * This constructor injects both an instance of `UserService`
+   * This constructor injects both an instance of `TodoService`
    * and an instance of `MatSnackBar` into this component.
    *
-   * @param userService the `UserService` used to get users from the server
+   * @param todoService the `TodoService` used to get todos from the server
    * @param snackBar the `MatSnackBar` used to display feedback
    */
-  constructor(private userService: UserService, private snackBar: MatSnackBar) {
+  constructor(private todoService: TodoService, private snackBar: MatSnackBar) {
     // Nothing here – everything is in the injection parameters.
   }
 
   /**
-   * Get the users from the server, filtered by the role and age specified
+   * Get the todos from the server, filtered by the role and age specified
    * in the GUI.
    */
-  getUsersFromServer() {
-    this.userService.getUsers({
-      role: this.userRole,
-      age: this.userAge
-    }).subscribe(returnedUsers => {
+  getTodosFromServer() {
+    this.todoService.getTodos({
+      status: this.todoStatus
+    }).subscribe(returnedTodos => {
       // This inner function passed to `subscribe` will be called
-      // when the `Observable` returned by `getUsers()` has one
-      // or more values to return. `returnedUsers` will be the
-      // name for the array of `Users` we got back from the
+      // when the `Observable` returned by `getTodos()` has one
+      // or more values to return. `returnedTodos` will be the
+      // name for the array of `Todos` we got back from the
       // server.
-      this.serverFilteredUsers = returnedUsers;
+      this.serverFilteredTodos = returnedTodos;
       this.updateFilter();
     }, err => {
-      // If there was an error getting the users, log
+      // If there was an error getting the todos, log
       // the problem and display a message.
-      console.error('We couldn\'t get the list of users; the server might be down');
+      console.error('We couldn\'t get the list of todos; the server might be down');
       this.snackBar.open(
         'Problem contacting the server – try again',
         'OK',
@@ -82,18 +70,18 @@ export class UserListComponent implements OnInit {
 
   /**
    * Called when the filtering information is changed in the GUI so we can
-   * get an updated list of `filteredUsers`.
+   * get an updated list of `filteredTodos`.
    */
   public updateFilter() {
-    this.filteredUsers = this.userService.filterUsers(
-      this.serverFilteredUsers, { name: this.userName, company: this.userCompany }
+    this.filteredTodos = this.todoService.filterTodos(
+      this.serverFilteredTodos, { category: this.todoCategory, owner: this.todoOwner, body: this.todoBody, limit: this.limit }
     );
   }
 
   /**
-   * Starts an asynchronous operation to update the users list
+   * Starts an asynchronous operation to update the todos list
    */
   ngOnInit(): void {
-    this.getUsersFromServer();
+    this.getTodosFromServer();
   }
 }

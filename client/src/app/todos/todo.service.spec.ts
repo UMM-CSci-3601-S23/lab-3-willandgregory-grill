@@ -1,20 +1,3 @@
-// import { TestBed } from '@angular/core/testing';
-
-// import { TodoService } from './todo.service';
-
-// describe('TodoService', () => {
-//   let service: TodoService;
-
-//   beforeEach(() => {
-//     TestBed.configureTestingModule({});
-//     service = TestBed.inject(TodoService);
-//   });
-
-//   it('should be created', () => {
-//     expect(service).toBeTruthy();
-//   });
-// });
-
 import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -24,33 +7,23 @@ import { TodoService } from './todo.service';
 describe('TodoService', () => {
   // A small collection of test todos
   const testTodos: Todo[] = [
-    {
-      _id: 'chris_id',
-      name: 'Chris',
-      age: 25,
-      company: 'UMM',
-      email: 'chris@this.that',
-      role: 'admin',
-      avatar: 'https://gravatar.com/avatar/8c9616d6cc5de638ea6920fb5d65fc6c?d=identicon'
-    },
-    {
-      _id: 'pat_id',
-      name: 'Pat',
-      age: 37,
-      company: 'IBM',
-      email: 'pat@something.com',
-      role: 'editor',
-      avatar: 'https://gravatar.com/avatar/b42a11826c3bde672bce7e06ad729d44?d=identicon'
-    },
-    {
-      _id: 'jamie_id',
-      name: 'Jamie',
-      age: 37,
-      company: 'Frogs, Inc.',
-      email: 'jamie@frogs.com',
-      role: 'viewer',
-      avatar: 'https://gravatar.com/avatar/d4a6c71dd9470ad4cf58f78c100258bf?d=identicon'
-    }
+    {_id:'58895985a22c04e761776d54',
+    owner: 'Blanche',
+    status: 'incomplete',
+    body:'the owners bond, james bond.',
+    category:'software design'},
+
+    {_id:'58895985c1849992336c219b',
+    owner: 'Fry',
+    status: 'incomplete',
+    body:'Ipsum esse est ullamco magna tempor anim laborum non officia deserunt veniam commodo. Aute minim incididunt ex commodo.',
+    category:'video games'},
+
+    {_id:'58895985ae3b752b124e7663',
+    owner: 'Bob',
+    status: 'complete',
+    body:'I came, I saw, I conquored.',
+    category:'apple picking'},
   ];
   let todoService: TodoService;
   // These are used to mock the HTTP requests so that we (a) don't have to
@@ -119,64 +92,64 @@ describe('TodoService', () => {
        * return return a filtered subset of the todos.
        */
 
-      it('correctly calls api/todos with filter parameter \'admin\'', () => {
-        todoService.getTodos({ role: 'admin' }).subscribe(
-          todos => expect(todos).toBe(testTodos)
+      it('correctly calls api/todos with filter parameter \'status\'', () => {
+        todoService.getTodos({ status: 'complete' }).subscribe(
+          todos => expect(todos.length > 0)
         );
 
-        // Specify that (exactly) one request will be made to the specified URL with the role parameter.
+        // Specify that (exactly) one request will be made to the specified URL with the status parameter.
         const req = httpTestingController.expectOne(
-          (request) => request.url.startsWith(todoService.todoUrl) && request.params.has('role')
+          (request) => request.url.startsWith(todoService.todoUrl) && request.params.has('status')
         );
 
         // Check that the request made to that URL was a GET request.
         expect(req.request.method).toEqual('GET');
 
-        // Check that the role parameter was 'admin'
-        expect(req.request.params.get('role')).toEqual('admin');
+        // Check that the status parameter was 'complete'
+        expect(req.request.params.get('status')).toEqual('complete');
 
         req.flush(testTodos);
       });
 
-      it('correctly calls api/todos with filter parameter \'age\'', () => {
+      it('correctly calls api/todos with filter parameter \'body\'', () => {
 
-        todoService.getTodos({ age: 25 }).subscribe(
-          todos => expect(todos).toBe(testTodos)
+        todoService.getTodos({ body: 'I came, I saw, I conquored.'}).subscribe(
+          todos => expect(todos.length > 0)
         );
 
         // Specify that (exactly) one request will be made to the specified URL with the age parameter.
         const req = httpTestingController.expectOne(
-          (request) => request.url.startsWith(todoService.todoUrl) && request.params.has('age')
+          (request) => request.url.startsWith(todoService.todoUrl) && request.params.has('body')
         );
 
         // Check that the request made to that URL was a GET request.
         expect(req.request.method).toEqual('GET');
 
         // Check that the age parameter was '25'
-        expect(req.request.params.get('age')).toEqual('25');
+        expect(req.request.params.get('body')).toEqual('I came, I saw, I conquored.');
 
         req.flush(testTodos);
       });
 
       it('correctly calls api/todos with multiple filter parameters', () => {
 
-        todoService.getTodos({ role: 'editor', company: 'IBM', age: 37 }).subscribe(
-          todos => expect(todos).toBe(testTodos)
+        todoService.getTodos({ body: 'the owners bond, james bond.', status: 'incomplete'}).subscribe(
+          todos => expect(todos.length > 0)
         );
 
         // Specify that (exactly) one request will be made to the specified URL with the role parameter.
         const req = httpTestingController.expectOne(
           (request) => request.url.startsWith(todoService.todoUrl)
-            && request.params.has('role') && request.params.has('company') && request.params.has('age')
+            && request.params.has('body') && request.params.has('status')
         );
 
         // Check that the request made to that URL was a GET request.
         expect(req.request.method).toEqual('GET');
 
-        // Check that the role, company, and age parameters are correct
-        expect(req.request.params.get('role')).toEqual('editor');
-        expect(req.request.params.get('company')).toEqual('IBM');
-        expect(req.request.params.get('age')).toEqual('37');
+        // Check that the role, category, and age parameters are correct
+        expect(req.request.params.get('body')).toEqual('the owners bond, james bond.');
+        expect(req.request.params.get('status')).toEqual('incomplete');
+
 
         req.flush(testTodos);
       });
@@ -210,53 +183,42 @@ describe('TodoService', () => {
   });
 
   describe('filterTodos()', () => {
-    /*
-     * Since `filterTodos` actually filters "locally" (in
-     * Angular instead of on the server), we do want to
-     * confirm that everything it returns has the desired
-     * properties. Since this doesn't make a call to the server,
-     * though, we don't have to use the mock HttpClient and
-     * all those complications.
+    /**  Body, owner and category are all filtered by angular.\
+     * This tests their functionality and how them woring with each other.
      */
-    it('filters by name', () => {
-      const todoName = 'i';
-      const filteredTodos = todoService.filterTodos(testTodos, { name: todoName });
-      // There should be two todos with an 'i' in their
-      // name: Chris and Jamie.
-      expect(filteredTodos.length).toBe(2);
-      // Every returned todo's name should contain an 'i'.
+
+
+    it('filters by owner', () => {
+      const todoOwner = 'blanche';
+      const filteredTodos = todoService.filterTodos(testTodos, { owner: todoOwner });
+
+      expect(filteredTodos.length).toBe(30);
       filteredTodos.forEach(todo => {
-        expect(todo.name.indexOf(todoName)).toBeGreaterThanOrEqual(0);
+        expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
       });
     });
 
-    it('filters by company', () => {
-      const todoCompany = 'UMM';
-      const filteredTodos = todoService.filterTodos(testTodos, { company: todoCompany });
-      // There should be just one todo that has UMM as their company.
+    it('filters by category', () => {
+      const todoCategory = 'software';
+      const filteredTodos = todoService.filterTodos(testTodos, { category: todoCategory });
       expect(filteredTodos.length).toBe(1);
-      // Every returned todo's company should contain 'UMM'.
+
       filteredTodos.forEach(todo => {
-        expect(todo.company.indexOf(todoCompany)).toBeGreaterThanOrEqual(0);
+        expect(todo.category.indexOf(todoCategory)).toBeGreaterThanOrEqual(0);
       });
     });
 
-    it('filters by name and company', () => {
-      // There's only one todo (Chris) whose name
-      // contains an 'i' and whose company contains
-      // an 'M'. There are two whose name contains
-      // an 'i' and two whose company contains an
-      // an 'M', so this should test combined filtering.
-      const todoName = 'i';
-      const todoCompany = 'M';
-      const filters = { name: todoName, company: todoCompany };
+    it('filters by owner and category', () => {
+      const todoOwner = 'b';
+      const todoCategory = 'M';
+      const filters = { owner: todoOwner, category: todoCategory };
       const filteredTodos = todoService.filterTodos(testTodos, filters);
       // There should be just one todo with these properties.
-      expect(filteredTodos.length).toBe(1);
+      expect(filteredTodos.length).toBe(5);
       // Every returned todo should have _both_ these properties.
       filteredTodos.forEach(todo => {
-        expect(todo.name.indexOf(todoName)).toBeGreaterThanOrEqual(0);
-        expect(todo.company.indexOf(todoCompany)).toBeGreaterThanOrEqual(0);
+        expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
+        expect(todo.category.indexOf(todoCategory)).toBeGreaterThanOrEqual(0);
       });
     });
   });
