@@ -1,20 +1,3 @@
-// import { TestBed } from '@angular/core/testing';
-
-// import { TodoService } from './todo.service';
-
-// describe('TodoService', () => {
-//   let service: TodoService;
-
-//   beforeEach(() => {
-//     TestBed.configureTestingModule({});
-//     service = TestBed.inject(TodoService);
-//   });
-
-//   it('should be created', () => {
-//     expect(service).toBeTruthy();
-//   });
-// });
-
 import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -27,7 +10,7 @@ describe('TodoService', () => {
     {_id:'58895985a22c04e761776d54',
     owner: 'Blanche',
     status: 'incomplete',
-    body:'the names bond, james bond.',
+    body:'the owners bond, james bond.',
     category:'software design'},
 
     {_id:'58895985c1849992336c219b',
@@ -150,7 +133,7 @@ describe('TodoService', () => {
 
       it('correctly calls api/todos with multiple filter parameters', () => {
 
-        todoService.getTodos({ body: 'the names bond, james bond.', status: 'incomplete'}).subscribe(
+        todoService.getTodos({ body: 'the owners bond, james bond.', status: 'incomplete'}).subscribe(
           todos => expect(todos.length > 0)
         );
 
@@ -163,8 +146,8 @@ describe('TodoService', () => {
         // Check that the request made to that URL was a GET request.
         expect(req.request.method).toEqual('GET');
 
-        // Check that the role, company, and age parameters are correct
-        expect(req.request.params.get('body')).toEqual('the names bond, james bond.');
+        // Check that the role, category, and age parameters are correct
+        expect(req.request.params.get('body')).toEqual('the owners bond, james bond.');
         expect(req.request.params.get('status')).toEqual('incomplete');
 
 
@@ -200,53 +183,42 @@ describe('TodoService', () => {
   });
 
   describe('filterTodos()', () => {
-    /*
-     * Since `filterTodos` actually filters "locally" (in
-     * Angular instead of on the server), we do want to
-     * confirm that everything it returns has the desired
-     * properties. Since this doesn't make a call to the server,
-     * though, we don't have to use the mock HttpClient and
-     * all those complications.
+    /**  Body, owner and category are all filtered by angular.\
+     * This tests their functionality and how them woring with each other.
      */
-    it('filters by name', () => {
-      const todoName = 'i';
-      const filteredTodos = todoService.filterTodos(testTodos, { name: todoName });
-      // There should be two todos with an 'i' in their
-      // name: Chris and Jamie.
-      expect(filteredTodos.length).toBe(2);
-      // Every returned todo's name should contain an 'i'.
+
+
+    it('filters by owner', () => {
+      const todoOwner = 'blanche';
+      const filteredTodos = todoService.filterTodos(testTodos, { owner: todoOwner });
+
+      expect(filteredTodos.length).toBe(30);
       filteredTodos.forEach(todo => {
-        expect(todo.name.indexOf(todoName)).toBeGreaterThanOrEqual(0);
+        expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
       });
     });
 
-    it('filters by company', () => {
-      const todoCompany = 'UMM';
-      const filteredTodos = todoService.filterTodos(testTodos, { company: todoCompany });
-      // There should be just one todo that has UMM as their company.
+    it('filters by category', () => {
+      const todoCategory = 'software';
+      const filteredTodos = todoService.filterTodos(testTodos, { category: todoCategory });
       expect(filteredTodos.length).toBe(1);
-      // Every returned todo's company should contain 'UMM'.
+
       filteredTodos.forEach(todo => {
-        expect(todo.company.indexOf(todoCompany)).toBeGreaterThanOrEqual(0);
+        expect(todo.category.indexOf(todoCategory)).toBeGreaterThanOrEqual(0);
       });
     });
 
-    it('filters by name and company', () => {
-      // There's only one todo (Chris) whose name
-      // contains an 'i' and whose company contains
-      // an 'M'. There are two whose name contains
-      // an 'i' and two whose company contains an
-      // an 'M', so this should test combined filtering.
-      const todoName = 'i';
-      const todoCompany = 'M';
-      const filters = { name: todoName, company: todoCompany };
+    it('filters by owner and category', () => {
+      const todoOwner = 'b';
+      const todoCategory = 'M';
+      const filters = { owner: todoOwner, category: todoCategory };
       const filteredTodos = todoService.filterTodos(testTodos, filters);
       // There should be just one todo with these properties.
-      expect(filteredTodos.length).toBe(1);
+      expect(filteredTodos.length).toBe(5);
       // Every returned todo should have _both_ these properties.
       filteredTodos.forEach(todo => {
-        expect(todo.name.indexOf(todoName)).toBeGreaterThanOrEqual(0);
-        expect(todo.company.indexOf(todoCompany)).toBeGreaterThanOrEqual(0);
+        expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
+        expect(todo.category.indexOf(todoCategory)).toBeGreaterThanOrEqual(0);
       });
     });
   });

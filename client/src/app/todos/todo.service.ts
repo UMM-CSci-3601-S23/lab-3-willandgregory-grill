@@ -50,7 +50,7 @@ export class TodoService {
    *  from the server after a possibly substantial delay (because we're
    *  contacting a remote server over the Internet).
    */
-  getTodos(filters?: { status?: TodoStatus; owner?: string; body?: string; category?: string }): Observable<Todo[]> {
+  getTodos(filters?: { status?: TodoStatus; owner?: string; body?: string; category?: string; limit?: number }): Observable<Todo[]> {
     // `HttpParams` is essentially just a map used to hold key-value
     // pairs that are then encoded as "?key1=value1&key2=value2&…" in
     // the URL when we make the call to `.get()` below.
@@ -67,6 +67,9 @@ export class TodoService {
       }
       if (filters.category) {
         httpParams = httpParams.set('category', filters.category);
+      }
+      if (filters.limit) {
+        httpParams = httpParams.set('limit', filters.limit);
       }
     }
     // Send the HTTP GET request with the given URL and parameters.
@@ -99,7 +102,7 @@ export class TodoService {
    * @param filters the map of key-value pairs used for the filtering
    * @returns an array of `Todos` matching the given filters
    */
-  filterTodos(todos: Todo[], filters: { category?: string; body?: string }): Todo[] {
+  filterTodos(todos: Todo[], filters: { category?: string; owner?: string; body?: string; limit?: number}): Todo[] {
     let filteredTodos = todos;
 
     if (filters.category) {
@@ -107,11 +110,19 @@ export class TodoService {
       filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
     }
 
+    if (filters.owner) {
+      filters.owner = filters.owner.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
+    }
+
     if (filters.body) {
       filters.body = filters.body.toLowerCase();
       filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
     }
 
+    if (filters.limit) {
+      filteredTodos = filteredTodos.slice(0, filters.limit);
+    }
     return filteredTodos;
   }
 }

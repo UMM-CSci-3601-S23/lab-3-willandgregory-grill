@@ -23,7 +23,7 @@ export class TodoListComponent implements OnInit {
   // These are public so that tests can reference them (.spec.ts)
   public serverFilteredTodos: Todo[];
   public filteredTodos: Todo[];
-
+  public limit: number;
   public todoOwner: string;
   public todoStatus: TodoStatus;
   public todoBody: string;
@@ -47,7 +47,6 @@ export class TodoListComponent implements OnInit {
    */
   getTodosFromServer() {
     this.todoService.getTodos({
-      body: this.todoBody,
       status: this.todoStatus
     }).subscribe(returnedTodos => {
       // This inner function passed to `subscribe` will be called
@@ -75,7 +74,7 @@ export class TodoListComponent implements OnInit {
    */
   public updateFilter() {
     this.filteredTodos = this.todoService.filterTodos(
-      this.serverFilteredTodos, { category: this.todoCategory }
+      this.serverFilteredTodos, { category: this.todoCategory, owner: this.todoOwner, body: this.todoBody, limit: this.limit }
     );
   }
 
