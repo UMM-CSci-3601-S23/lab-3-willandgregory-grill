@@ -189,10 +189,10 @@ describe('TodoService', () => {
 
 
     it('filters by owner', () => {
-      const todoOwner = 'blanche';
+      const todoOwner = 'B';
       const filteredTodos = todoService.filterTodos(testTodos, { owner: todoOwner });
 
-      expect(filteredTodos.length).toBe(30);
+      expect(filteredTodos.length).toBe(2);
       filteredTodos.forEach(todo => {
         expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
       });
@@ -210,11 +210,11 @@ describe('TodoService', () => {
 
     it('filters by owner and category', () => {
       const todoOwner = 'b';
-      const todoCategory = 'M';
+      const todoCategory = 'apple picking';
       const filters = { owner: todoOwner, category: todoCategory };
       const filteredTodos = todoService.filterTodos(testTodos, filters);
       // There should be just one todo with these properties.
-      expect(filteredTodos.length).toBe(5);
+      expect(filteredTodos.length).toBe(1);
       // Every returned todo should have _both_ these properties.
       filteredTodos.forEach(todo => {
         expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
